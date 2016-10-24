@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         FloatingActionButton fab_Refresh = (FloatingActionButton) findViewById(R.id.fab_Refresh);
         final EditText tf_New_Matchword = (EditText) findViewById(R.id.tf_New_Matchword);
         Button btn_Add_Matchword = (Button) findViewById(R.id.btn_Add_Matchword);
