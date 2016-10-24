@@ -1,9 +1,7 @@
 package de.philek.hnnotifier;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -26,9 +24,9 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     public final static String TWEETS = "tweets";
-    private ArrayAdapter<String> matchwordAdapter;
-    private String url = "ENTER TWITTER URL HERE";
-    private String filter = "ENTER SEARCH FILTER HERE";
+    private ArrayAdapter<String> matchWordAdapter;
+    private String url = "https://twitter.com/hnfb08";
+    private String filter = "TweetTextSize";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,27 +35,27 @@ public class MainActivity extends AppCompatActivity {
 
 
         FloatingActionButton fab_Refresh = (FloatingActionButton) findViewById(R.id.fab_Refresh);
-        final EditText tf_New_Matchword = (EditText) findViewById(R.id.tf_New_Matchword);
-        Button btn_Add_Matchword = (Button) findViewById(R.id.btn_Add_Matchword);
+        final EditText tf_New_MatchWord = (EditText) findViewById(R.id.tf_New_Matchword);
+        Button btn_Add_MatchWord = (Button) findViewById(R.id.btn_Add_Matchword);
         ListView lv_MatchWords = (ListView) findViewById(R.id.listView_Matchwords);
 
 
         final ArrayList<String> matchwordList = new ArrayList<>();
-        matchwordAdapter = new ArrayAdapter<>(
+        matchWordAdapter = new ArrayAdapter<>(
                 getBaseContext(),
                 android.R.layout.simple_list_item_1,
                 matchwordList);
 
-        lv_MatchWords.setAdapter(matchwordAdapter);
+        lv_MatchWords.setAdapter(matchWordAdapter);
 
-        btn_Add_Matchword.setOnClickListener(new View.OnClickListener() {
+        btn_Add_MatchWord.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String matchword = tf_New_Matchword.getText().toString();
+                String matchword = tf_New_MatchWord.getText().toString();
 
                 if(!matchword.equals("")) {
-                    addMatchword(tf_New_Matchword.getText().toString());
-                    tf_New_Matchword.setText("");
+                    addMatchword(tf_New_MatchWord.getText().toString());
+                    tf_New_MatchWord.setText("");
                 }
 
             }
@@ -78,21 +76,21 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void addMatchword(String matchword) {
-        matchwordAdapter.add(matchword);
+        matchWordAdapter.add(matchword);
         Toast.makeText(this, "New matchword added", Toast.LENGTH_SHORT).show();
     }
 
 
     public class ReadTweetsTask extends AsyncTask<String, String, ArrayList<String>> {
 
-        private List<String> matchwords;
+        private List<String> matchWords;
 
-        public ReadTweetsTask(ArrayList<String> matchwords) {
+        private ReadTweetsTask(ArrayList<String> matchwords) {
             super();
             for(String s : matchwords) {
                 System.out.println(s);
             }
-            this.matchwords = matchwords;
+            this.matchWords = matchwords;
         }
 
         @Override
@@ -103,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(ArrayList<String> strings) {
             //super.onPostExecute(strings);
-            if(strings != null & !strings.isEmpty()) {
+            if(strings != null && !strings.isEmpty()) {
                 Intent resultIntent = new Intent(MainActivity.this, ResultActivity.class);
                 resultIntent.putExtra(MainActivity.TWEETS, strings);
                 startActivity(resultIntent);
@@ -122,13 +120,13 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println(params[1]);
                 Elements tweets = doc.getElementsByClass(params[1]);
 
-                if(tweets != null & !tweets.isEmpty()) {
-                    foundTweets = new ArrayList<String>();
+                if(tweets != null && !tweets.isEmpty()) {
+                    foundTweets = new ArrayList<>();
 
                     for(Element tweet : tweets) {
                         String tweetText = tweet.text();
 
-                        for(String matchword : matchwords) {
+                        for(String matchword : matchWords) {
                             if(tweetText.matches(".*" + matchword + ".*")) {
                                 foundTweets.add(tweetText);
                             }
@@ -141,7 +139,10 @@ public class MainActivity extends AppCompatActivity {
             } catch(IOException e) {
                 e.printStackTrace();
             }
-            System.out.println("found tweets empty: " + foundTweets.isEmpty());
+            if(foundTweets != null){
+                System.out.println("found tweets empty: " + foundTweets.isEmpty());
+            }
+
             return foundTweets;
         }
     }
