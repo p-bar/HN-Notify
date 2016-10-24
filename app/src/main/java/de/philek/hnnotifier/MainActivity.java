@@ -27,8 +27,8 @@ public class MainActivity extends AppCompatActivity {
 
     public final static String TWEETS = "tweets";
     private ArrayAdapter<String> matchwordAdapter;
-    private String url = "https://twitter.com/HNFB08";
-    private String filter = "TweetTextSize";
+    private String url = "ENTER TWITTER URL HERE";
+    private String filter = "ENTER SEARCH FILTER HERE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,8 +41,8 @@ public class MainActivity extends AppCompatActivity {
         ListView lv_MatchWords = (ListView) findViewById(R.id.listView_Matchwords);
 
 
-        final ArrayList<String> matchwordList = new ArrayList<String>();
-        matchwordAdapter = new ArrayAdapter<String>(
+        final ArrayList<String> matchwordList = new ArrayList<>();
+        matchwordAdapter = new ArrayAdapter<>(
                 getBaseContext(),
                 android.R.layout.simple_list_item_1,
                 matchwordList);
