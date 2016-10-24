@@ -25,8 +25,6 @@ public class MainActivity extends AppCompatActivity {
 
     public final static String TWEETS = "tweets";
     private ArrayAdapter<String> matchWordAdapter;
-    private String url = "https://twitter.com/hnfb08";
-    private String filter = "TweetTextSize";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(!matchwordList.isEmpty()) {
-                    new ReadTweetsTask(matchwordList).execute(url, filter);
+                    new ReadTweetsTask(matchwordList).execute();
                 } else {
                     Toast.makeText(MainActivity.this, "Matchword-Liste ist leer!", Toast.LENGTH_LONG).show();
                 }
@@ -84,6 +82,8 @@ public class MainActivity extends AppCompatActivity {
     public class ReadTweetsTask extends AsyncTask<String, String, ArrayList<String>> {
 
         private List<String> matchWords;
+        private static final String URL = "https://twitter.com/hnfb08?lang=de";
+        private static final String FILTER = "dir-ltr";
 
         private ReadTweetsTask(ArrayList<String> matchwords) {
             super();
@@ -112,30 +112,25 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected ArrayList<String> doInBackground(String... params) {
-            ArrayList<String> foundTweets = null;
+            ArrayList<String> foundTweets = new ArrayList<>();
 
             try {
-                System.out.println(params[0]);
-                Document doc = Jsoup.connect(params[0]).get();
-                System.out.println(params[1]);
-                Elements tweets = doc.getElementsByClass(params[1]);
+                Document doc = Jsoup.connect(URL).get();
+                Elements tweets = doc.getElementsByClass(FILTER);
 
-                if(tweets != null && !tweets.isEmpty()) {
-                    foundTweets = new ArrayList<>();
+                for(Element element: tweets){
 
-                    for(Element tweet : tweets) {
-                        String tweetText = tweet.text();
+                    for(String matchWord: matchWords){
 
-                        for(String matchword : matchWords) {
-                            if(tweetText.matches(".*" + matchword + ".*")) {
-                                foundTweets.add(tweetText);
-                            }
+                        if(element.html().contains(matchWord)){
+                            foundTweets.add(element.text());
                         }
+
                     }
-                } else {
-                    System.out.println("tweets sind leer!");
-                    return null;
+
                 }
+
+
             } catch(IOException e) {
                 e.printStackTrace();
             }

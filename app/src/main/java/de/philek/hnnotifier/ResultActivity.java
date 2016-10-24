@@ -10,11 +10,15 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.jsoup.select.Elements;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ResultActivity extends AppCompatActivity {
@@ -32,10 +36,15 @@ public class ResultActivity extends AppCompatActivity {
         List<String> tweets = intent.getStringArrayListExtra(MainActivity.TWEETS);
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        ListAdapter adapter = new ResultAdapter(getBaseContext(), (ArrayList<String>)tweets);
+        ListView listView = (ListView) findViewById(R.id.listView);
+        listView.setAdapter(adapter);
         View resultContent = inflater.inflate(R.layout.content_result, null);
 
         resolveTweets(tweets);
     }
+
 
 
     private void resolveTweets(List<String> tweets) {

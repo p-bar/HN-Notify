@@ -13,4 +13,10 @@
     tools:context="de.philek.hnnotifier.ResultActivity"
     tools:showIn="@layout/activity_result">
 
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/listView" />
 </RelativeLayout>
