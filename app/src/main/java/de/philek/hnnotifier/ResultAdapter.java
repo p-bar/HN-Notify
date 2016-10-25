@@ -25,7 +25,7 @@ public class ResultAdapter extends ArrayAdapter<String> {
     public View getView(int position, View convertView, ViewGroup parent) {
         String text = getItem(position);
         if(convertView == null){
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.result, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.result_item, parent, false);
         }
 
         TextView resultText = (TextView)convertView.findViewById(R.id.resultText);

@@ -3,4 +3,6 @@
     <string name="btn_add_matchWord">Add</string>
     <string name="hint_tf_new_matchword">Matchword...</string>
     <string name="title_activity_result">ResultActivity</string>
+    <string name="options">Options</string>
+    <string name="delete">Delete</string>
 </resources>
