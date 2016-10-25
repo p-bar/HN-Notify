@@ -7,6 +7,9 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,27 +38,27 @@ public class ResultActivity extends AppCompatActivity {
         Intent intent = getIntent();
         List<String> tweets = intent.getStringArrayListExtra(MainActivity.TWEETS);
 
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        ListAdapter adapter = new ResultAdapter(getBaseContext(), (ArrayList<String>)tweets);
-        ListView listView = (ListView) findViewById(R.id.listView);
-        listView.setAdapter(adapter);
-        View resultContent = inflater.inflate(R.layout.content_result, null);
+        RecyclerView rv = (RecyclerView) findViewById(R.id.recyclerView);
+        rv.setHasFixedSize(true);
 
-        resolveTweets(tweets);
-    }
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+
+        rv.setLayoutManager(llm);
+        rv.setItemAnimator(new DefaultItemAnimator());
+
+        RecyclerViewAdapter rv_adapter = new RecyclerViewAdapter(tweets);
+        rv.setAdapter(rv_adapter);
 
 
 
-    private void resolveTweets(List<String> tweets) {
-        if(tweets == null) Toast.makeText(this, "tweets = null", Toast.LENGTH_SHORT).show();
-        if(tweets.isEmpty()) Toast.makeText(this, "tweets sind leer", Toast.LENGTH_SHORT).show();
-        for(String tweet : tweets) {
-            CardView tweetCard = new CardView(this);
-            TextView cardContent = new TextView(this);
-            cardContent.setText(tweet);
+        //LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        //View resultContent = inflater.inflate(R.layout.result_recycler_view, null);
 
-            tweetCard.addView(cardContent);
-        }
+        //ListAdapter adapter = new ResultAdapter(getBaseContext(), (ArrayList<String>)tweets);
+        //ListView listView = (ListView) findViewById(R.id.listView);
+        //listView.setAdapter(adapter);
+
+        //View resultContent = inflater.inflate(R.layout.content_result, null);
     }
 }
