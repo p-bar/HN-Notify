@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="de.philek.hnnotifier">
 
+    <!-- Permissions for basic internet access-->
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
@@ -27,6 +28,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.philek.hnnotifier.MainActivity" />
         </activity>
+
+        <!--Registered Receivers-->
+        <receiver android:name=".CheckTwitterReceiver" />
     </application>
 
 </manifest>

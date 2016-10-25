@@ -1,18 +1,17 @@
 package de.philek.hnnotifier;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
+import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.widget.SearchViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.PopupMenu;
 import android.view.ContextMenu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -20,24 +19,16 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     public final static String TWEETS = "tweets";
     private ArrayAdapter<String> matchWordAdapter;
-    private static final String PREFERENCES_NAME = "HN-Notify";
-    private static final String PREF_FILTER = "filter";
+    public static final String PREFERENCES_NAME = "HN-Notify";
+    public static final String PREF_FILTER = "filter";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
                         String matchword = tf_New_MatchWord.getText().toString();
 
                         if (!matchword.isEmpty()) {
-                            addMatchword(tf_New_MatchWord.getText().toString());
+                            addMatchWord(tf_New_MatchWord.getText().toString());
                             tf_New_MatchWord.setText("");
                         }
 
@@ -105,26 +96,39 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if(!isNetworkAvailable()){
                     Toast.makeText(MainActivity.this, "No internet connection", Toast.LENGTH_LONG).show();
-                    System.out.println("no internet connection");
                     return;
                 }
                 if(!matchwordList.isEmpty()) {
-                    new ReadTweetsTask(matchwordList).execute();
+                    new ReadTweetsTask(getApplicationContext(), matchwordList).execute();
                 } else {
                     Toast.makeText(MainActivity.this, "Matchword-Liste ist leer!", Toast.LENGTH_LONG).show();
                 }
 
             }
         });
+
+        //set alarm at specific time
+        AlarmManager alarmMgr = (AlarmManager)getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(getApplicationContext(), CheckTwitterReceiver.class);
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
+
+        alarmMgr.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                SystemClock.elapsedRealtime() +
+                        10 * 1000, alarmIntent);
+
+// setRepeating() lets you specify a precise custom interval--in this case,
+// 1 day
+        //alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+        //        AlarmManager.INTE, alarmIntent);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        System.out.println("RESUME!!!!");
         //load list items from shared preferences
         SharedPreferences prefs = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
         String filters = prefs.getString(PREF_FILTER, null);
+        matchWordAdapter.clear();
         if(filters != null){
             String[] allFilters = filters.split(";");
             for(String f: allFilters){
@@ -139,13 +143,14 @@ public class MainActivity extends AppCompatActivity {
         //serialize list items into shared preferences
         StringBuilder filterBuilder = new StringBuilder();
         for(int i = 0; i < matchWordAdapter.getCount(); i++){
-            filterBuilder.append(matchWordAdapter.getItem(i)+";");
+            filterBuilder.append(matchWordAdapter.getItem(i));
+            filterBuilder.append(";");
         }
         SharedPreferences sharedpreferences = getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedpreferences.edit();
 
         editor.putString(PREF_FILTER, filterBuilder.toString());
-        editor.commit();
+        editor.apply();
 
     }
 
@@ -156,73 +161,10 @@ public class MainActivity extends AppCompatActivity {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    private void addMatchword(String matchword) {
-        matchWordAdapter.remove(matchword);
-        matchWordAdapter.add(matchword);
-        Toast.makeText(this, "New matchword added", Toast.LENGTH_SHORT).show();
+    private void addMatchWord(String matchWord) {
+        matchWordAdapter.remove(matchWord);
+        matchWordAdapter.add(matchWord);
     }
 
 
-    public class ReadTweetsTask extends AsyncTask<String, String, ArrayList<String>> {
-
-        private List<String> matchWords;
-        private static final String URL = "https://twitter.com/hnfb08?lang=de";
-        private static final String FILTER = "dir-ltr";
-
-        private ReadTweetsTask(ArrayList<String> matchwords) {
-            super();
-            for(String s : matchwords) {
-                System.out.println(s);
-            }
-            this.matchWords = matchwords;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<String> strings) {
-            //super.onPostExecute(strings);
-            if(strings != null && !strings.isEmpty()) {
-                Intent resultIntent = new Intent(MainActivity.this, ResultActivity.class);
-                resultIntent.putExtra(MainActivity.TWEETS, strings);
-                startActivity(resultIntent);
-            } else {
-                Toast.makeText(MainActivity.this, "Keine Tweets gefunden", Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        @Override
-        protected ArrayList<String> doInBackground(String... params) {
-            ArrayList<String> foundTweets = new ArrayList<>();
-
-            try {
-                Document doc = Jsoup.connect(URL).get();
-                Elements tweets = doc.getElementsByClass(FILTER);
-
-                for(Element element: tweets){
-
-                    for(String matchWord: matchWords){
-
-                        if(element.html().contains(matchWord)){
-                            foundTweets.add(element.text());
-                        }
-
-                    }
-
-                }
-
-
-            } catch(IOException e) {
-                e.printStackTrace();
-            }
-            if(foundTweets != null){
-                System.out.println("found tweets empty: " + foundTweets.isEmpty());
-            }
-
-            return foundTweets;
-        }
-    }
 }
