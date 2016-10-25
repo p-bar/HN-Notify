@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
 // setRepeating() lets you specify a precise custom interval--in this case,
 // 1 day
         //alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-        //        AlarmManager.INTE, alarmIntent);
+               //AlarmManager.IN, alarmIntent);
     }
 
     @Override
