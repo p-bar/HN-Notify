@@ -18,8 +18,5 @@ public class CheckTwitterReceiver extends BroadcastReceiver {
         if(filters != null){
             new ReadTweetsTask(context, Arrays.asList(filters.split(";"))).execute();
         }
-
-
-
     }
 }

@@ -49,16 +49,5 @@ public class ResultActivity extends AppCompatActivity {
 
         RecyclerViewAdapter rv_adapter = new RecyclerViewAdapter(tweets);
         rv.setAdapter(rv_adapter);
-
-
-
-        //LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        //View resultContent = inflater.inflate(R.layout.result_recycler_view, null);
-
-        //ListAdapter adapter = new ResultAdapter(getBaseContext(), (ArrayList<String>)tweets);
-        //ListView listView = (ListView) findViewById(R.id.listView);
-        //listView.setAdapter(adapter);
-
-        //View resultContent = inflater.inflate(R.layout.content_result, null);
     }
 }

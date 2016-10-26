@@ -21,13 +21,13 @@ class ReadTweetsTask extends AsyncTask<String, String, ArrayList<String>> {
     private static final String FILTER = "dir-ltr";
     private Context context;
 
-    ReadTweetsTask(Context context, List<String> matchwords) {
+    ReadTweetsTask(Context context, List<String> matchWords) {
         super();
-        for(String s : matchwords) {
+        for(String s : matchWords) {
             System.out.println(s);
         }
         this.context = context;
-        this.matchWords = matchwords;
+        this.matchWords = matchWords;
     }
 
     @Override
@@ -57,18 +57,12 @@ class ReadTweetsTask extends AsyncTask<String, String, ArrayList<String>> {
             Elements tweets = doc.getElementsByClass(FILTER);
 
             for(Element element: tweets){
-
                 for(String matchWord: matchWords){
-
                     if(element.html().contains(matchWord)){
                         foundTweets.add(element.text());
                     }
-
                 }
-
             }
-
-
         } catch(IOException e) {
             e.printStackTrace();
         }

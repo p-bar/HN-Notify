@@ -1,16 +1,12 @@
 package de.philek.hnnotifier;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.SystemClock;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,11 +38,11 @@ public class MainActivity extends AppCompatActivity {
         final ListView lv_MatchWords = (ListView) findViewById(R.id.listView_Matchwords);
 
 
-        final ArrayList<String> matchwordList = new ArrayList<>();
+        final ArrayList<String> matchWordList = new ArrayList<>();
         matchWordAdapter = new ArrayAdapter<>(
                 getBaseContext(),
                 android.R.layout.simple_list_item_1,
-                matchwordList);
+                matchWordList);
 
         lv_MatchWords.setAdapter(matchWordAdapter);
         lv_MatchWords.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
@@ -78,18 +74,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-                btn_Add_MatchWord.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String matchword = tf_New_MatchWord.getText().toString();
+        btn_Add_MatchWord.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String matchWord = tf_New_MatchWord.getText().toString();
 
-                        if (!matchword.isEmpty()) {
-                            addMatchWord(tf_New_MatchWord.getText().toString());
-                            tf_New_MatchWord.setText("");
-                        }
-
-                    }
-                });
+                if (!matchWord.isEmpty()) {
+                    addMatchWord(tf_New_MatchWord.getText().toString());
+                    tf_New_MatchWord.setText("");
+                }
+            }
+        });
 
         fab_Refresh.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,23 +93,23 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "No internet connection", Toast.LENGTH_LONG).show();
                     return;
                 }
-                if(!matchwordList.isEmpty()) {
-                    new ReadTweetsTask(getApplicationContext(), matchwordList).execute();
+                if(!matchWordList.isEmpty()) {
+                    new ReadTweetsTask(getApplicationContext(), matchWordList).execute();
                 } else {
-                    Toast.makeText(MainActivity.this, "Matchword-Liste ist leer!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, "Matchword list is empty!", Toast.LENGTH_LONG).show();
                 }
 
             }
         });
 
         //set alarm at specific time
-        AlarmManager alarmMgr = (AlarmManager)getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+        /*AlarmManager alarmMgr = (AlarmManager)getApplicationContext().getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(getApplicationContext(), CheckTwitterReceiver.class);
         PendingIntent alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
 
         alarmMgr.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 SystemClock.elapsedRealtime() +
-                        10 * 1000, alarmIntent);
+                        10 * 1000, alarmIntent);*/
 
 // setRepeating() lets you specify a precise custom interval--in this case,
 // 1 day
@@ -165,6 +160,4 @@ public class MainActivity extends AppCompatActivity {
         matchWordAdapter.remove(matchWord);
         matchWordAdapter.add(matchWord);
     }
-
-
 }

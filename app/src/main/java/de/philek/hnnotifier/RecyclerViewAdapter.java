@@ -13,9 +13,9 @@ import java.util.List;
  * Created by Alexander on 25.10.2016.
  */
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.TweetViewHolder> {
+class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.TweetViewHolder> {
 
-    public static class TweetViewHolder extends RecyclerView.ViewHolder {
+    static class TweetViewHolder extends RecyclerView.ViewHolder {
         CardView tweetCard;
         TextView tweetText;
 
@@ -27,7 +27,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         }
     }
 
-    List<String> tweets;
+    private List<String> tweets;
 
     RecyclerViewAdapter(List<String> tweets) {
         this.tweets = tweets;
@@ -41,13 +41,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public TweetViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.tweet_card, viewGroup, false);
-        TweetViewHolder tvh = new TweetViewHolder(v);
-        return tvh;
+        return new TweetViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(TweetViewHolder tweetViewHolder, int i) {
-        tweetViewHolder.tweetText.setText(tweets.get(i).toString());
+        tweetViewHolder.tweetText.setText(tweets.get(i));
     }
 
     @Override
